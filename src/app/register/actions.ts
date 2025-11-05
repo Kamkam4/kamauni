@@ -2,6 +2,7 @@
 
 import { prisma } from '../../lib/prisma';
 import { put } from '@vercel/blob';
+import { cookies } from 'next/headers';
 
 // Georgian to Latin transliteration mapping
 const georgianToLatin: { [key: string]: string } = {
@@ -79,7 +80,7 @@ export async function registerStudent(formData: FormData) {
 
     // Create student
     console.log('Creating student in database...');
-    await prisma.student.create({
+    const student = await prisma.student.create({
       data: {
         name,
         surname,
@@ -92,7 +93,16 @@ export async function registerStudent(formData: FormData) {
       },
     });
 
-    console.log('Student created successfully');
+    // Set login cookie after successful registration
+    console.log('Setting login cookie...');
+    const cookieStore = await cookies();
+    cookieStore.set('studentId', student.id.toString(), {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 60 * 24 * 7, // 1 week
+    });
+
+    console.log('Student created and logged in successfully');
     return { email, password };
   } catch (error) {
     console.error('Registration error:', error);
