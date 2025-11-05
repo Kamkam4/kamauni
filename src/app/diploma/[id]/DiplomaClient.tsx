@@ -209,80 +209,38 @@ export default function DiplomaClient({ diplomaData }: { diplomaData: DiplomaDat
         <style dangerouslySetInnerHTML={{
           __html: `
             @media print {
-              /* Hide parent containers */
-              body > div:not(:has(.diploma-container)) {
-                display: none !important;
-              }
-              
-              /* Hide non-print elements */
-              .no-print,
-              .bg-yellow-50,
-              button,
-              a {
-                display: none !important;
-              }
-
-              /* Show and position diploma */
-              .diploma-container {
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
-                right: 0 !important;
-                bottom: 0 !important;
-                width: 100vw !important;
-                height: 100vh !important;
-                margin: 0 !important;
-                padding: 2rem !important;
-                box-shadow: none !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-              }
-
-              /* Ensure all diploma children are visible */
-              .diploma-container * {
-                visibility: visible !important;
-                display: block !important;
-              }
-
-              /* Page setup */
               @page {
                 size: A4 landscape;
-                margin: 0;
+                margin: 0.5in;
               }
 
-              html, body {
+              /* Hide only specific non-print elements */
+              .no-print {
+                display: none !important;
+              }
+
+              /* Reset body styling */
+              body {
                 background: white !important;
                 margin: 0 !important;
                 padding: 0 !important;
-                width: 100% !important;
-                height: 100% !important;
-                overflow: hidden !important;
               }
 
-              /* Preserve colors */
+              /* Diploma container takes full page */
+              .diploma-container {
+                position: relative !important;
+                box-shadow: none !important;
+                page-break-inside: avoid !important;
+                width: 100% !important;
+                height: auto !important;
+                max-width: none !important;
+              }
+
+              /* Preserve all colors and backgrounds */
               * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
                 color-adjust: exact !important;
-              }
-
-              /* Flex and grid layouts */
-              .flex {
-                display: flex !important;
-              }
-
-              .grid {
-                display: grid !important;
-              }
-
-              /* Text alignment */
-              .text-center {
-                text-align: center !important;
-              }
-
-              .text-left {
-                text-align: left !important;
               }
             }
           `
