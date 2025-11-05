@@ -25,7 +25,7 @@ export async function updateAllGradesToHighest(studentId: string) {
     });
 
     // Update all grades for this student to the highest grade (A with score 100) for faculty subjects only
-    const updatePromises = subjects.map((subject: { id: string }) =>
+    const updatePromises = subjects.map((subject: { id: number; name: string; credits: number; facultyId: number }) =>
       prisma.grade.upsert({
         where: {
           studentId_subjectId: {
