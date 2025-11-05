@@ -209,69 +209,80 @@ export default function DiplomaClient({ diplomaData }: { diplomaData: DiplomaDat
         <style dangerouslySetInnerHTML={{
           __html: `
             @media print {
-              /* Remove all page elements except diploma */
-              body * {
-                visibility: hidden !important;
+              /* Hide parent containers */
+              body > div:not(:has(.diploma-container)) {
+                display: none !important;
               }
               
-              .diploma-container,
+              /* Hide non-print elements */
+              .no-print,
+              .bg-yellow-50,
+              button,
+              a {
+                display: none !important;
+              }
+
+              /* Show and position diploma */
+              .diploma-container {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                margin: 0 !important;
+                padding: 2rem !important;
+                box-shadow: none !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+              }
+
+              /* Ensure all diploma children are visible */
               .diploma-container * {
                 visibility: visible !important;
-              }
-              
-              /* Position diploma to fill the page */
-              .diploma-container {
-                position: absolute !important;
-                left: 0 !important;
-                top: 0 !important;
-                width: 100% !important;
-                height: 100% !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                box-shadow: none !important;
+                display: block !important;
               }
 
-              /* Hide navigation, buttons, and other UI elements */
-              .no-print,
-              nav,
-              header,
-              footer,
-              button,
-              a[href],
-              .bg-yellow-50,
-              .bg-gray-100 {
-                display: none !important;
-                visibility: hidden !important;
-              }
-
-              /* Page setup for landscape */
+              /* Page setup */
               @page {
                 size: A4 landscape;
-                margin: 0.5in;
+                margin: 0;
               }
 
-              /* Ensure white background */
-              html,
-              body {
+              html, body {
                 background: white !important;
                 margin: 0 !important;
                 padding: 0 !important;
                 width: 100% !important;
                 height: 100% !important;
+                overflow: hidden !important;
               }
 
-              /* Preserve colors and styling */
+              /* Preserve colors */
               * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
                 color-adjust: exact !important;
               }
-              
-              /* Override Next.js specific elements */
-              #__next,
-              #__next > div {
-                display: block !important;
-                visibility: visible !important;
+
+              /* Flex and grid layouts */
+              .flex {
+                display: flex !important;
+              }
+
+              .grid {
+                display: grid !important;
+              }
+
+              /* Text alignment */
+              .text-center {
+                text-align: center !important;
+              }
+
+              .text-left {
+                text-align: left !important;
               }
             }
           `
