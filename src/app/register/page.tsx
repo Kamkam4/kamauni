@@ -11,6 +11,9 @@ interface Faculty {
 export default function RegisterPage() {
   const [faculties, setFaculties] = useState<Faculty[]>([]);
   const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successData, setSuccessData] = useState<{email: string; password: string} | null>(null);
+  const [countdown, setCountdown] = useState(3);
 
   useEffect(() => {
     fetch('/api/faculties')
@@ -31,9 +34,21 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       const result = await registerStudent(formData);
-      alert(`Registration successful! Your email is ${result.email} and password is ${result.password}`);
-      // Redirect to dashboard after successful registration
-      window.location.href = '/dashboard';
+      setSuccessData({ email: result.email, password: result.password });
+      setShowSuccess(true);
+      setCountdown(3);
+      
+      // Countdown timer
+      const timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            window.location.href = '/dashboard';
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
     } catch (error) {
       alert('Registration failed: ' + (error instanceof Error ? error.message : 'Unknown error'));
     } finally {
@@ -43,6 +58,70 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-green-50 via-emerald-50 to-teal-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      {/* Success Modal */}
+      {showSuccess && successData && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 transform animate-in slide-in-from-bottom-4 duration-500">
+            <div className="text-center">
+              {/* Success Icon */}
+              <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+                <svg className="h-8 w-8 text-green-600 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+
+              {/* Success Title */}
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                რეგისტრაცია წარმატებით დასრულდა! 🎉
+              </h3>
+              
+              <p className="text-gray-600 mb-6">
+                თქვენი ანგარიში შექმნილია KamaUni-ში
+              </p>
+
+              {/* Credentials Card */}
+              <div className="bg-linear-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-6 border border-emerald-200">
+                <div className="space-y-4">
+                  <div className="text-left">
+                    <label className="block text-sm font-medium text-emerald-800 mb-1">
+                      ელ-ფოსტა
+                    </label>
+                    <div className="bg-white rounded-lg px-3 py-2 border border-emerald-300 font-mono text-sm text-emerald-900">
+                      {successData.email}
+                    </div>
+                  </div>
+                  
+                  <div className="text-left">
+                    <label className="block text-sm font-medium text-emerald-800 mb-1">
+                      პაროლი
+                    </label>
+                    <div className="bg-white rounded-lg px-3 py-2 border border-emerald-300 font-mono text-sm text-emerald-900">
+                      {successData.password}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Auto Redirect Message */}
+              <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                <div className="flex items-center justify-center space-x-2">
+                  <svg className="animate-spin h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span className="text-blue-800 font-medium">
+                    გადამისამართება დეშბორდზე... ({countdown}წმ)
+                  </span>
+                </div>
+                <p className="text-sm text-blue-600 mt-1">
+                  გთხოვთ შეინახოთ თქვენი მონაცემები
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center">
           <svg className="mx-auto h-12 w-12 text-emerald-600 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
