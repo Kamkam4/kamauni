@@ -209,102 +209,69 @@ export default function DiplomaClient({ diplomaData }: { diplomaData: DiplomaDat
         <style dangerouslySetInnerHTML={{
           __html: `
             @media print {
-              /* Hide everything except the diploma container */
-              body > *:not(.diploma-container) { display: none !important; }
-              body > .diploma-container { display: block !important; }
+              /* Remove all page elements except diploma */
+              body * {
+                visibility: hidden !important;
+              }
+              
+              .diploma-container,
+              .diploma-container * {
+                visibility: visible !important;
+              }
+              
+              /* Position diploma to fill the page */
+              .diploma-container {
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+              }
 
-              /* Hide Next.js development UI and all overlays */
-              #__next-build-watcher,
-              #__next-prerender-indicator,
-              #__next-error-overlay,
-              #__next-error-overlay *,
-              [data-nextjs-toast-errors],
-              [data-nextjs-toast-errors] *,
-              .nextjs-toast-errors,
-              .nextjs-toast-errors *,
-              .nextjs-portal,
-              .nextjs-portal *,
-              .nextjs-dev-tools,
-              .nextjs-dev-tools *,
-              [data-nextjs-dev-tools],
-              [data-nextjs-dev-tools] *,
-              [data-nextjs-dialog],
-              [data-nextjs-dialog] *,
-              .nextjs-container,
-              .nextjs-container *,
-              #__next-error-boundary,
-              #__next-error-boundary *,
-              .overlay, .modal, .popup, .dialog,
-              .fixed, .absolute, .sticky,
-              nav, header, footer,
-              .no-print, .no-print *,
-              button, a, input, select, textarea {
+              /* Hide navigation, buttons, and other UI elements */
+              .no-print,
+              nav,
+              header,
+              footer,
+              button,
+              a[href],
+              .bg-yellow-50,
+              .bg-gray-100 {
                 display: none !important;
                 visibility: hidden !important;
-                opacity: 0 !important;
-                position: absolute !important;
-                left: -9999px !important;
-                top: -9999px !important;
               }
 
-              /* Show only the diploma */
-              .diploma-container {
-                display: block !important;
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 100vw !important;
-                height: 100vh !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                box-shadow: none !important;
-                border: none !important;
-                background: white !important;
-                z-index: 9999 !important;
-              }
-
-              /* Ensure diploma content is visible */
-              .diploma-container *,
-              .diploma-container *::before,
-              .diploma-container *::after {
-                display: block !important;
-                visibility: visible !important;
-                opacity: 1 !important;
-                position: static !important;
-                background: transparent !important;
-              }
-
-              /* Page setup for A4 landscape */
+              /* Page setup for landscape */
               @page {
-                margin: 0.5in;
                 size: A4 landscape;
+                margin: 0.5in;
               }
 
-              html, body {
+              /* Ensure white background */
+              html,
+              body {
                 background: white !important;
                 margin: 0 !important;
                 padding: 0 !important;
-                overflow: visible !important;
-                height: auto !important;
                 width: 100% !important;
-                font-family: serif !important;
+                height: 100% !important;
               }
 
-              /* Preserve colors in print */
+              /* Preserve colors and styling */
               * {
                 -webkit-print-color-adjust: exact !important;
-                color-adjust: exact !important;
                 print-color-adjust: exact !important;
-                box-shadow: none !important;
+                color-adjust: exact !important;
               }
-
-              /* Ensure text is black for printing */
-              .diploma-container {
-                color: black !important;
-              }
-
-              .diploma-container * {
-                color: inherit !important;
+              
+              /* Override Next.js specific elements */
+              #__next,
+              #__next > div {
+                display: block !important;
+                visibility: visible !important;
               }
             }
           `
