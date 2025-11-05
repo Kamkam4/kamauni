@@ -19,12 +19,16 @@ function transliterateGeorgian(text: string): string {
 
 export async function registerStudent(formData: FormData) {
   try {
+    console.log('Starting registration process...');
+
     const name = formData.get('name') as string;
     const surname = formData.get('surname') as string;
     const birthDateString = formData.get('birthDate') as string;
     const gender = formData.get('gender') as 'MALE' | 'FEMALE';
     const facultyId = parseInt(formData.get('facultyId') as string);
     const photo = formData.get('photo') as File;
+
+    console.log('Form data received:', { name, surname, birthDateString, gender, facultyId, photo: photo ? 'present' : 'missing' });
 
     if (!name || !surname || !birthDateString || !gender || !facultyId || !photo) {
       throw new Error('All fields are required');
@@ -37,7 +41,9 @@ export async function registerStudent(formData: FormData) {
       // Create date from YYYY-MM-DD format
       const [year, month, day] = dateStr.split('-').map(Number);
       birthDate = new Date(year, month - 1, day); // month is 0-indexed
+      console.log('Parsed birth date:', birthDate);
     } catch (error) {
+      console.error('Date parsing error:', error);
       throw new Error('Invalid birth date format');
     }
 
@@ -51,13 +57,17 @@ export async function registerStudent(formData: FormData) {
     const email = `${latinName}.${latinSurname}@kamauni.ge`;
     const password = 'kamauni2025';
 
+    console.log('Generated email:', email);
+
     // Check if email already exists
+    console.log('Checking for existing student...');
     const existing = await prisma.student.findUnique({ where: { email } });
     if (existing) {
       throw new Error('Student with this name and surname already exists');
     }
 
     // Save photo to Vercel Blob
+    console.log('Uploading photo to Vercel Blob...');
     const bytes = await photo.arrayBuffer();
     const buffer = Buffer.from(bytes);
     const filename = `${Date.now()}-${photo.name}`;
@@ -65,8 +75,10 @@ export async function registerStudent(formData: FormData) {
       access: 'public',
     });
     const photoUrl = blob.url;
+    console.log('Photo uploaded:', photoUrl);
 
     // Create student
+    console.log('Creating student in database...');
     await prisma.student.create({
       data: {
         name,
@@ -80,9 +92,14 @@ export async function registerStudent(formData: FormData) {
       },
     });
 
+    console.log('Student created successfully');
     return { email, password };
   } catch (error) {
     console.error('Registration error:', error);
-    throw new Error(`Registration failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    // Re-throw with more specific error message
+    if (error instanceof Error) {
+      throw new Error(`Registration failed: ${error.message}`);
+    }
+    throw new Error('Registration failed: Unknown error');
   }
 }
