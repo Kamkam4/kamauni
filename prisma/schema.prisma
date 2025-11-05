@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Faculty {
+  id       Int      @id @default(autoincrement())
+  name     String   @unique
+  subjects Subject[]
+  students Student[]
+}
+
+model Subject {
+  id        Int      @id @default(autoincrement())
+  name      String
+  credits   Int
+  facultyId Int
+  faculty   Faculty  @relation(fields: [facultyId], references: [id])
+  grades    Grade[]
+
+  @@unique([name, facultyId])
+}
+
+model Student {
+  id        Int      @id @default(autoincrement())
+  name      String
+  surname   String
+  birthDate DateTime
+  gender    Gender?
+  photo     String?  // URL or path to photo
+  facultyId Int
+  faculty   Faculty  @relation(fields: [facultyId], references: [id])
+  email     String   @unique
+  password  String
+  grades    Grade[]
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+model Grade {
+  id        Int     @id @default(autoincrement())
+  studentId Int
+  subjectId Int
+  score     Float?  // numerical score
+  grade     String  // A, B, C, D, E, F, FX
+  student   Student @relation(fields: [studentId], references: [id])
+  subject   Subject @relation(fields: [subjectId], references: [id])
+
+  @@unique([studentId, subjectId])
+}
