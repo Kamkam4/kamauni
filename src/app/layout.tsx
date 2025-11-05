@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "KamaUni - სტუდენტური მართვის სისტემა",
+  title: "KamaUni - კამკამიძის სახელობის უნივერსიტეტი",
   description: "კამკამიძის სახელობის უნივერსიტეტი",
 };
 
